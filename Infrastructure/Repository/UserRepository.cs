@@ -1,19 +1,18 @@
 ﻿using ApplicationProduct.Application.Interfaces;
+using ApplicationProduct.Application.Services;
 using ApplicationProduct.Domain.Entities;
 using ApplicationProduct.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
-namespace ApplicationProduct.Infrastructure.Repositories
+namespace ApplicationProduct.Infrastructure.Repository
 {
     public class UserRepository : IUserRepository
     {
         private readonly AppDbContext _context;
-        private readonly IPasswordHasher _passwordHasher;
 
-        public UserRepository(AppDbContext context, IPasswordHasher passwordHasher)
+        public UserRepository(AppDbContext context)
         {
             _context = context;
-            _passwordHasher = passwordHasher;
         }
 
         public async Task AddAsync(User user)
@@ -54,8 +53,11 @@ namespace ApplicationProduct.Infrastructure.Repositories
         }
         public async Task<User?> GetByUsernameAndPassword(string username, string password)
         {
-            return _context.Users
-                .FirstOrDefault(u => u.Username == username && u.Password == _passwordHasher.HashPassword(password));
+            var user = await _context.Users.Where(Users => Users.Username == username && Users.Password == password).AsNoTracking()
+    .FirstOrDefaultAsync();
+
+
+            return user;
         }
     }
 }

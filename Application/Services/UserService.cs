@@ -1,4 +1,5 @@
 ﻿
+using ApplicationProduct.Application.DTOs;
 using ApplicationProduct.Application.Interfaces;
 using ApplicationProduct.Domain.Entities;
 
@@ -7,39 +8,32 @@ namespace ApplicationProduct.Application.Services
     public class UserService : IUserService
     {
         private readonly IUserRepository _userRepository;
-        private readonly IPasswordHasher _passwordHasher;
+        private readonly IAuthService _authService;
 
-        public UserService(IUserRepository userRepository, IPasswordHasher passwordHasher)
+        public UserService(IUserRepository userRepository, IAuthService authService)
         {
             _userRepository = userRepository;
-            _passwordHasher = passwordHasher;
+            _authService = authService;
         }
 
         public async Task<User> CreateUserAsync(User user)
         {
             user.Id = Guid.NewGuid();
             user.Enable = true;
-            user.Password = _passwordHasher.HashPassword(user.Password);
+            user.Password = _authService.ComputeSha256Hash(user.Password);
 
             await _userRepository.AddAsync(user);
             return user;
         }
         public async Task<User> VerifyUserCredentialsAsync(string username, string password)
         {
-            var user = await _userRepository.GetByUsernameAsync(username);
+            password = _authService.ComputeSha256Hash(password);
+            var user = await _userRepository.GetByUsernameAndPassword(username, password);
 
             if (user == null || !user.Enable)
             {
                 return null;
             }
-
-            // Verificar a senha utilizando o BCrypt
-            bool isPasswordValid = BCrypt.Net.BCrypt.Verify(password, user.Password);
-            if (!isPasswordValid)
-            {
-                return null;             
-            }
-
             return user;
         }
         public async Task<User> UpdateUserAsync(User user)
@@ -76,6 +70,22 @@ namespace ApplicationProduct.Application.Services
                 throw new Exception("Usuário não encontrado.");
 
             user.Enable = false;
+            await _userRepository.UpdateAsync(user);
+            return user;
+        }
+
+        public async Task<User> UpdatePassWord(EditPasswordDto dto)
+        {
+            dto.password = _authService.ComputeSha256Hash(dto.password);
+            var user = await _userRepository.GetByUsernameAndPassword(dto.username, dto.password);
+
+            if (user == null || !user.Enable)
+            {
+                return null;
+            }
+
+            user.Password = _authService.ComputeSha256Hash(dto.newpassword);
+
             await _userRepository.UpdateAsync(user);
             return user;
         }

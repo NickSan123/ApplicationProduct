@@ -3,7 +3,7 @@ using ApplicationProduct.Domain.Entities;
 using ApplicationProduct.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
-namespace ApplicationProduct.Infrastructure.Repositories
+namespace ApplicationProduct.Infrastructure.Repository
 {
     public class SessionRepository(AppDbContext dbContext) : ISessionRepository
     {
@@ -19,6 +19,11 @@ namespace ApplicationProduct.Infrastructure.Repositories
             return await _context.Sessions.Where(x => x.Id == id).FirstAsync();
         }
 
+        public async Task<Session?> GetSessionByToken(string token)
+        {
+            return await _context.Sessions.Where(x => x.Token == token).FirstOrDefaultAsync();
+        }
+
         public async Task<Session> LogoutSessionAsync(Session session)
         {
             session.LogoutAt = DateTime.UtcNow;
@@ -26,6 +31,13 @@ namespace ApplicationProduct.Infrastructure.Repositories
             _context.Sessions.Update(session);
             await _context.SaveChangesAsync();
 
+            return session;
+        }
+
+        public async Task<Session> AddSessionAsync(Session session)
+        {
+            await _context.Sessions.AddAsync(session);
+            await _context.SaveChangesAsync();
             return session;
         }
     }

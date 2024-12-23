@@ -1,4 +1,5 @@
-﻿using ApplicationProduct.Domain.Entities;
+﻿using ApplicationProduct.Application.DTOs;
+using ApplicationProduct.Domain.Entities;
 
 namespace ApplicationProduct.Application.Interfaces
 {
@@ -10,6 +11,8 @@ namespace ApplicationProduct.Application.Interfaces
         Task<User> GetUserByIdAsync(Guid id);
         Task<IEnumerable<User>> GetUsersByNameAsync(string name);
         Task<User> DisableUserAsync(Guid id);
+        Task<User> UpdatePassWord(EditPasswordDto dto);
         public Task<User> VerifyUserCredentialsAsync(string username, string password);
+
     }
 }
