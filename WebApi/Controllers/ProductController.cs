@@ -2,6 +2,7 @@
 using ApplicationProduct.Domain.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace ApplicationProduct.WebApi.Controllers
 {
@@ -20,7 +21,16 @@ namespace ApplicationProduct.WebApi.Controllers
             {
                 return Unauthorized("Camada 8! Voce deve inserir o token");
             }
-            var payload = await _authService.ValidateToken(dadosToken);
+            JwtSecurityToken payload = null;
+
+            try
+            {
+                await _authService.ValidateToken(dadosToken);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
             if (payload == null)
             {
                 return Unauthorized("Tokem invalido ou espirado");
@@ -38,7 +48,16 @@ namespace ApplicationProduct.WebApi.Controllers
             {
                 return Unauthorized("Camada 8! Voce deve inserir o token");
             }
-            var payload = await _authService.ValidateToken(dadosToken);
+            JwtSecurityToken payload = null;
+
+            try
+            {
+                await _authService.ValidateToken(dadosToken);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
             if (payload == null)
             {
                 return Unauthorized("Tokem invalido ou espirado");

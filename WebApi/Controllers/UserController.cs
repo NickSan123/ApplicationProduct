@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using System.ComponentModel.DataAnnotations;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace ApplicationProduct.WebApi.Controllers
 {
@@ -28,7 +29,17 @@ namespace ApplicationProduct.WebApi.Controllers
             {
                 return Unauthorized("Camada 8! Voce deve inserir o token");
             }
-            var payload = await _authService.ValidateToken(dadosToken);
+            JwtSecurityToken payload = null;
+
+            try
+            {
+                await _authService.ValidateToken(dadosToken);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+
             if (payload == null)
             {
                 if (!dadosToken.Equals("grendene-token"))
