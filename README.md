@@ -22,13 +22,13 @@ O projeto segue o padrão de camadas de uma arquitetura limpa:
 ## Pré-requisitos
 Certifique-se de ter os seguintes itens instalados no seu ambiente:
 
-- .NET SDK (versão compatível com o projeto)
+- .NET SDK (versão compatível com o projeto(.net core 8)
 - SQLITE
 
 ## Configuração do Projeto
 1. Clone o repositório:
    ```bash
-   git clone <URL_DO_REPOSITORIO>
+   git clone https://github.com/NickSan123/ApplicationProduct/
    ```
 
 2. Navegue até a pasta principal do projeto:
