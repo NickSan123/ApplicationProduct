@@ -1,12 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using ApplicationProduct.Domain.Entities;
 
-namespace Application.Interfaces
+namespace ApplicationProduct.Application.Interfaces
 {
-    internal interface IUserService
+    public interface IUserService
     {
+        Task<User> CreateUserAsync(User user);
+        Task<User> UpdateUserAsync(User user);
+        Task<IEnumerable<User>> GetAllUsersAsync();
+        Task<User> GetUserByIdAsync(Guid id);
+        Task<IEnumerable<User>> GetUsersByNameAsync(string name);
+        Task<User> DisableUserAsync(Guid id);
+        public Task<User> VerifyUserCredentialsAsync(string username, string password);
     }
 }
